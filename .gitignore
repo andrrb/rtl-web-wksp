@@ -1,1 +1,5 @@
 .vscode
+*/*.mp4
+*.bat
+project-specs/
+*/proj-specs-selction/

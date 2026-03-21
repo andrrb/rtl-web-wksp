@@ -1,0 +1,17 @@
+services:
+  server:
+    build: .
+    ports:
+      - "15353:53/udp"
+      - "15353:53/tcp"
+    labels:
+      com.docker.compose.project: dns
+
+  client:
+    build: .
+    stdin_open: true
+    tty: true
+    depends_on:
+      - server
+    labels:
+      com.docker.compose.project: dns

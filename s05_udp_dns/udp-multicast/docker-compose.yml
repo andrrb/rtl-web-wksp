@@ -1,0 +1,40 @@
+services:
+  server:
+    build: .
+    command: ["python", "server.py"]
+    networks:
+      - multicast_net
+
+  client1:
+    build: .
+    command: ["python", "client.py", "Alice"]
+    stdin_open: true
+    tty: true
+    networks:
+      - multicast_net
+    depends_on:
+      - server
+
+  client2:
+    build: .
+    command: ["python", "client.py", "Bob"]
+    stdin_open: true
+    tty: true
+    networks:
+      - multicast_net
+    depends_on:
+      - server
+
+  client3:
+    build: .
+    command: ["python", "client.py", "Charlie"]
+    stdin_open: true
+    tty: true
+    networks:
+      - multicast_net
+    depends_on:
+      - server
+
+networks:
+  multicast_net:
+    driver: bridge
