@@ -5,6 +5,8 @@ PORT        = 9999
 BUFFER_SIZE = 1024
 
 clienti_conectati = {}
+mesaje = {}
+id_contor = 0
 
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 server_socket.bind((HOST, PORT))
@@ -43,13 +45,42 @@ while True:
                 raspuns = "EROARE: Nu esti conectat la server."
 
         elif comanda == 'PUBLISH':
-            raspuns = "EROARE: Comanda PUBLISH nu este inca implementata."
+            if adresa_client not in clienti_conectati:
+                raspuns = "EROARE: Nu esti conectat la server."
+            elif not argumente.strip():
+                raspuns = "EROARE: Mesajul nu poate fi gol."
+            else:
+                id_contor += 1
+                mesaje[id_contor] = {'text': argumente.strip(), 'autor': adresa_client}
+                raspuns = f"OK: Mesaj publicat cu ID={id_contor}"
+                print(f"[SERVER] Mesaj nou ID={id_contor} de la {adresa_client}")
 
         elif comanda == 'DELETE':
-            raspuns = "EROARE: Comanda DELETE nu este inca implementata."
+            if adresa_client not in clienti_conectati:
+                raspuns = "EROARE: Nu esti conectat la server."
+            else:
+                try:
+                    id_de_sters = int(argumente.strip())
+                except ValueError:
+                    raspuns = "EROARE: ID-ul trebuie sa fie un numar intreg."
+                else:
+                    if id_de_sters not in mesaje:
+                        raspuns = f"EROARE: Nu exista mesaj cu ID={id_de_sters}."
+                    elif mesaje[id_de_sters]['autor'] != adresa_client:
+                        raspuns = "EROARE: Nu esti autorul acestui mesaj."
+                    else:
+                        del mesaje[id_de_sters]
+                        raspuns = f"OK: Mesaj cu ID={id_de_sters} a fost sters."
+                        print(f"[SERVER] Mesaj ID={id_de_sters} sters de {adresa_client}")
 
         elif comanda == 'LIST':
-            raspuns = "EROARE: Comanda LIST nu este inca implementata."
+            if adresa_client not in clienti_conectati:
+                raspuns = "EROARE: Nu esti conectat la server."
+            elif not mesaje:
+                raspuns = "OK: Nu exista mesaje publicate."
+            else:
+                linii = [f"ID={mid}: {m['text']}" for mid, m in mesaje.items()]
+                raspuns = "OK: Mesaje:\n" + "\n".join(linii)
 
         else:
             raspuns = f"EROARE: Comanda '{comanda}' este necunoscuta. Comenzi valide: CONNECT, DISCONNECT, PUBLISH, DELETE, LIST"

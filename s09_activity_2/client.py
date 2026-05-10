@@ -64,14 +64,33 @@ while True:
             este_conectat = False
 
     elif comanda == 'PUBLISH':
+        if not este_conectat:
+            print("EROARE: Nu esti conectat la server. Foloseste CONNECT mai intai.")
+            continue
+        argument = parti[1].strip() if len(parti) > 1 else ''
+        if not argument:
+            print("EROARE: Trebuie sa furnizezi un mesaj dupa PUBLISH.")
+            continue
         raspuns = trimite_comanda(intrare)
         print(raspuns)
 
     elif comanda == 'DELETE':
+        if not este_conectat:
+            print("EROARE: Nu esti conectat la server. Foloseste CONNECT mai intai.")
+            continue
+        argument = parti[1].strip() if len(parti) > 1 else ''
+        try:
+            int(argument)
+        except ValueError:
+            print("EROARE: Argumentul pentru DELETE trebuie sa fie un numar intreg.")
+            continue
         raspuns = trimite_comanda(intrare)
         print(raspuns)
 
     elif comanda == 'LIST':
+        if not este_conectat:
+            print("EROARE: Nu esti conectat la server. Foloseste CONNECT mai intai.")
+            continue
         raspuns = trimite_comanda(intrare)
         print(raspuns)
 
